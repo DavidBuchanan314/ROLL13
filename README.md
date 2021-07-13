@@ -15,7 +15,20 @@ The code is intended to be as readable as possible.
 The following tree of bullet points lists all the standards/specifications referenced in the code.
 
 - [RFC 8446 - The Transport Layer Security (TLS) Protocol Version 1.3](https://datatracker.ietf.org/doc/html/rfc8446) (2018)
-  - [RFC 8032 - Edwards-Curve Digital Signature Algorithm (EdDSA)](https://datatracker.ietf.org/doc/html/rfc8032) (2017)
   - [RFC 5116 - An Interface and Algorithms for Authenticated Encryption](https://datatracker.ietf.org/doc/html/rfc5116) (2008)
     - [NIST SP 800-38D - Recommendation for Block Cipher Modes of Operation:  Galois/Counter Mode (GCM) and GMAC](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf) (2007)
       - [FIPS 197 - Announcing the ADVANCED ENCRYPTION STANDARD (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf) (2001)
+
+To recap, that includes the following cryptographic primitives:
+
+ - SHA-256 hash function
+ - secp256r1 elliptic curves, for signatures and key exchange
+ - AES-128 symmetric encryption
+ - GCM, an authenticated block mode, used with AES.
+
+### How much work would it take to make this competitive with e.g. OpenSSL?
+
+- It needs exponentially more code, to implement the full TLS feature-set.
+- It would need to be written in a language that isn't Python, to improve performance.
+- The cryptographic implementations would need to be re-worked to prioritise performance (the current priority is readability). This typically results in much more complex code.
+- It would need to be audited and tested by a team of professionals.
