@@ -13,7 +13,7 @@ The code is intended to be as readable as possible.
 ### Self-Imposed Restrictions
 
 - No libraries. Everything is from scratch.
-- No reading other people's implementations - only specifications. I'm slightly "tainted" in this regard, because I've spent a lot of time reading other peoples' code over the years. However, my goal is to translate the specifications into code as literally as possible.
+- No reading other peoples' implementations - only specifications. I'm slightly "tainted" in this regard, because I've spent a lot of time reading other peoples' code over the years. However, my goal is to translate the specifications into code as literally as possible.
 - No magic numbers, except for those explicitly defined in a spec - and even then, they should be derived from first-principles, if possible.
 
 ### Implemented Specs
