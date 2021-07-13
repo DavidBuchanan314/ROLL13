@@ -1,6 +1,6 @@
 # ROLL13
 
-ROLL13 is a pure python implementation of a TLS 1.3 client, hand-rolled from first principles, including all cryptographic operations. Specifically, it implements the `TLS_AES_128_GCM_SHA256` cipher suite.
+ROLL13 is a pure python implementation of a TLS 1.3 client, hand-rolled from first principles, including all cryptographic operations. Specifically, it implements the `TLS_AES_128_GCM_SHA256` cipher suite, and secp256r1 (NIST P-256) for key exchange.
 
 ### Motivations
 
