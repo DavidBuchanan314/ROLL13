@@ -21,9 +21,9 @@ The following tree of bullet points lists all the standards/specifications refer
 
 To recap, that includes the following cryptographic primitives:
 
- - SHA-256 hash function
- - secp256r1 elliptic curves, for signatures and key exchange
- - AES-128 symmetric encryption
+ - SHA-256 hash function.
+ - secp256r1 elliptic curves, for signatures and key exchange.
+ - AES-128 symmetric encryption,
  - GCM, an authenticated block mode, used with AES.
 
 ### How much work would it take to make this competitive with e.g. OpenSSL?
