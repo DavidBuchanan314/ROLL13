@@ -58,7 +58,7 @@ Section 4.2.2 - SHA-256 Constants
 "These words represent the first thirty-two bits of the fractional parts of the
 cube roots of the first sixty-four prime numbers."
 
-TODO: full derivation
+See derivations/sha.py for the derivation of these constants.
 """
 K = [
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
