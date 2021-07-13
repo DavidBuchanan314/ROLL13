@@ -98,7 +98,7 @@ def word_iterator(m):
 
 
 # Section 5.3.3
-# TODO: where do these come from?
+# See derivations/sha.py for the derivation of these constants.
 initial_H = [
 	0x6a09e667,
 	0xbb67ae85,
