@@ -53,7 +53,7 @@ class Point():
 	
 	# point addition
 	# https://en.wikipedia.org/wiki/Elliptic_curve_point_multiplication#Point_addition
-	# TODO: implement iadd (in-place add)
+	# TODO: implement __iadd__ (in-place add)
 	def __add__(self, other):
 		P = self
 		Q = other

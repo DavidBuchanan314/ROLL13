@@ -8,13 +8,22 @@ I wanted to learn about the protocols and cryptography involved, in excruciating
 
 As a secondary goal, it proves that modern cryptography standards are still accessible to mere mortals.
 
-The code is intended to be as readable as possible.
+The code is intended to be as readable as possible (even at the cost of performance).
+There are lost of performance optimisations that could be made (especially in AES),
+but these make the implementation harder to understand. As a concrete example,
+take a look at [pyaes](https://github.com/ricmoo/pyaes/blob/master/pyaes/aes.py),
+a popular pure-python AES implementation. It's a perfectly reasonable implementation\*,
+however, it is not intuitively obvious how that code maps onto what is described
+in the FIPS 197 spec.
+
+\* Although its use of lookup tables likely makes it vulnerable to cache timing
+side-channel attacks.
 
 ### Self-Imposed Restrictions
 
 - No libraries. Everything is from scratch.
-- No reading other peoples' implementations - only specifications. I'm slightly "tainted" in this regard, because I've spent a lot of time reading other peoples' code over the years. However, my goal is to translate the specifications into code as literally as possible.
-- No magic numbers, except for those explicitly defined in a spec - and even then, they should be derived from first-principles, if possible.
+- No reading other peoples' implementations - only specifications. I'm slightly "tainted" in this regard, because I've spent a lot of time reading other peoples' code over the years. My goal is to translate the specifications into code as literally as possible.
+- No magic numbers, except for those explicitly defined in a spec - and even then, they should be derived from first-principles, if possible (see `./derivations/`).
 
 ### Implemented Specs
 
@@ -36,5 +45,5 @@ To recap, that includes the following cryptographic primitives:
 
 - It needs exponentially more code, to implement the full TLS feature-set.
 - It would need to be written in a language that isn't Python, to improve performance.
-- The cryptographic implementations would need to be re-worked to prioritise performance (the current priority is readability). This typically results in much more complex code.
+- The cryptographic implementations would need to be re-worked to prioritise performance, and remove side-channel vulnerabilities (the current priority is readability). This typically results in much more complex code.
 - It would need to be audited and tested by a team of professionals.
