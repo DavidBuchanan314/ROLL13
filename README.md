@@ -30,11 +30,13 @@ side-channel attacks.
 The following tree of bullet points lists all the standards/specifications referenced in the code.
 
 - [RFC 8446 - The Transport Layer Security (TLS) Protocol Version 1.3](https://datatracker.ietf.org/doc/html/rfc8446) (2018)
+  - [RFC 5869 - HMAC-based Extract-and-Expand Key Derivation Function (HKDF)](https://datatracker.ietf.org/doc/html/rfc5869) (2010)
+    - [RFC 2104 - HMAC: Keyed-Hashing for Message Authentication](https://datatracker.ietf.org/doc/html/rfc2104) (1997)
   - [RFC 5116 - An Interface and Algorithms for Authenticated Encryption](https://datatracker.ietf.org/doc/html/rfc5116) (2008)
     - [NIST SP 800-38D - Recommendation for Block Cipher Modes of Operation:  Galois/Counter Mode (GCM) and GMAC](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf) (2007)
       - [FIPS 197 - Announcing the ADVANCED ENCRYPTION STANDARD (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf) (2001)
 
-To recap, that includes the following cryptographic primitives:
+To recap, that includes the following cryptographic operations:
 
  - SHA-256 hash function.
  - secp256r1 elliptic curves, for signatures and key exchange.
