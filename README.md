@@ -16,7 +16,7 @@ a popular pure-python AES implementation. It's a perfectly reasonable implementa
 however, it is not intuitively obvious how that code maps onto what is described
 in the FIPS 197 spec.
 
-\* Although its use of lookup tables likely makes it vulnerable to cache timing
+\*Although its use of lookup tables likely makes it vulnerable to cache timing
 side-channel attacks.
 
 ### Self-Imposed Restrictions
