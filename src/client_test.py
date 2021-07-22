@@ -15,52 +15,52 @@ class CipherSuite(IntEnum):
 
 
 class HandshakeType(IntEnum):
-	client_hello = 1
-	server_hello = 2
-	new_session_ticket = 4
-	end_of_early_data = 5
+	client_hello         = 1
+	server_hello         = 2
+	new_session_ticket   = 4
+	end_of_early_data    = 5
 	encrypted_extensions = 8
-	certificate = 11
-	certificate_request = 13
-	certificate_verify = 15
-	finished = 20
-	key_update = 24
-	message_hash = 254
+	certificate          = 11
+	certificate_request  = 13
+	certificate_verify   = 15
+	finished             = 20
+	key_update           = 24
+	message_hash         = 254
 
 
 class AlertLevel(IntEnum):
 	warning = 1
-	fatal = 2
+	fatal   = 2
 
 
 class AlertDescription(IntEnum):
-	close_notify = 0
-	unexpected_message = 10
-	bad_record_mac = 20
-	record_overflow = 22
-	handshake_failure = 40
-	bad_certificate = 42
-	unsupported_certificate = 43
-	certificate_revoked = 44
-	certificate_expired = 45
-	certificate_unknown = 46
-	illegal_parameter = 47
-	unknown_ca = 48
-	access_denied = 49
-	decode_error = 50
-	decrypt_error = 51
-	protocol_version = 70
-	insufficient_security = 71
-	internal_error = 80
-	inappropriate_fallback = 86
-	user_canceled = 90
-	missing_extension = 109
-	unsupported_extension = 110
-	unrecognized_name = 112
+	close_notify                    = 0
+	unexpected_message              = 10
+	bad_record_mac                  = 20
+	record_overflow                 = 22
+	handshake_failure               = 40
+	bad_certificate                 = 42
+	unsupported_certificate         = 43
+	certificate_revoked             = 44
+	certificate_expired             = 45
+	certificate_unknown             = 46
+	illegal_parameter               = 47
+	unknown_ca                      = 48
+	access_denied                   = 49
+	decode_error                    = 50
+	decrypt_error                   = 51
+	protocol_version                = 70
+	insufficient_security           = 71
+	internal_error                  = 80
+	inappropriate_fallback          = 86
+	user_canceled                   = 90
+	missing_extension               = 109
+	unsupported_extension           = 110
+	unrecognized_name               = 112
 	bad_certificate_status_response = 113
-	unknown_psk_identity = 115
-	certificate_required = 116
-	no_application_protocol = 120
+	unknown_psk_identity            = 115
+	certificate_required            = 116
+	no_application_protocol         = 120
 
 
 class Alert(PrettyPrintable):
@@ -91,6 +91,10 @@ class Handshake(PrettyPrintable):
 			msg = ClientHello.read_from(io.BytesIO(msg))
 		elif msg_type == HandshakeType.server_hello:
 			msg = ServerHello.read_from(io.BytesIO(msg))
+		elif msg_type == HandshakeType.encrypted_extensions:
+			msg = EncryptedExtensions.read_from(io.BytesIO(msg))
+		elif msg_type == HandshakeType.certificate:
+			msg = Certificate.read_from(io.BytesIO(msg))
 		
 		return cls(msg_type, msg)
 
@@ -169,32 +173,75 @@ class ServerHello(PrettyPrintable):
 			extensions=extensions
 		)
 
+class EncryptedExtensions(PrettyPrintable):
+	def __init__(self, extensions):
+		self.extensions = extensions
+	
+	@classmethod
+	def read_from(cls, sf):
+		extensions_len = int.from_bytes(sf.read(2), "big")
+		extensions = read_extension_list(io.BytesIO(sf.read(extensions_len)), context=HandshakeType.encrypted_extensions)
+		return cls(extensions)
+
+
+class Certificate(PrettyPrintable):
+	def __init__(self, certificate_request_context, certificate_list):
+		self.certificate_request_context = certificate_request_context
+		self.certificate_list = certificate_list
+	
+	@classmethod
+	def read_from(cls, sf):
+		context_len = int.from_bytes(sf.read(1), "big")
+		certificate_request_context = sf.read(context_len)
+		cert_list_len = int.from_bytes(sf.read(3), "big")
+		certificate_list = []
+		start = sf.tell()
+		while sf.tell() - start < cert_list_len:
+			certificate_list.append(CertificateEntry.read_from(sf))
+		
+		return cls(certificate_request_context, certificate_list)
+
+
+class CertificateEntry(PrettyPrintable):
+	# XXX: assume always x509
+	def __init__(self, cert_data, extensions):
+		self.cert_data = cert_data
+		self.extensions = extensions
+	
+	@classmethod
+	def read_from(cls, sf):
+		cert_len = int.from_bytes(sf.read(3), "big")
+		cert_data = sf.read(cert_len)
+		extensions_len = int.from_bytes(sf.read(2), "big")
+		extensions = read_extension_list(io.BytesIO(sf.read(extensions_len)), context="dunno")
+		return cls(cert_data, extensions)
+
 
 class ExtensionType(IntEnum):
-	server_name = 0
-	max_fragment_length = 1
-	status_request = 5
-	supported_groups = 10
-	signature_algorithms = 13
-	use_srtp = 14
-	heartbeat = 15
+	server_name                            = 0
+	max_fragment_length                    = 1
+	status_request                         = 5
+	supported_groups                       = 10
+	signature_algorithms                   = 13
+	use_srtp                               = 14
+	heartbeat                              = 15
 	application_layer_protocol_negotiation = 16
-	signed_certificate_timestamp = 18
-	client_certificate_type = 19
-	server_certificate_type = 20
-	padding = 21
-	RESERVED_40 = 40
-	pre_shared_key = 41
-	early_data = 42
-	supported_versions = 43
-	cookie = 44
-	psk_key_exchange_modes = 45
-	RESERVED_46 = 46
-	certificate_authorities = 47
-	oid_filters = 48
-	post_handshake_auth = 49
-	signature_algorithms_cert = 50
-	key_share = 51
+	signed_certificate_timestamp           = 18
+	client_certificate_type                = 19
+	server_certificate_type                = 20
+	padding                                = 21
+	RESERVED_40                            = 40
+	pre_shared_key                         = 41
+	early_data                             = 42
+	supported_versions                     = 43
+	cookie                                 = 44
+	psk_key_exchange_modes                 = 45
+	RESERVED_46                            = 46
+	certificate_authorities                = 47
+	oid_filters                            = 48
+	post_handshake_auth                    = 49
+	signature_algorithms_cert              = 50
+	key_share                              = 51
 
 
 def read_extension_list(bio, **kwargs):
@@ -223,8 +270,23 @@ class Extension(PrettyPrintable):
 				extension_data = KeyShareClientHello.read_from(io.BytesIO(extension_data))
 			else:
 				assert(False)
+		elif extension_type == ExtensionType.supported_groups:
+			extension_data = NamedGroupList.read_from(io.BytesIO(extension_data))
 		
 		return cls(extension_type, extension_data)
+
+
+class NamedGroupList(PrettyPrintable):
+	def __init__(self, named_group_list):
+		self.named_group_list = named_group_list
+	
+	@classmethod
+	def read_from(cls, sf):
+		count = int.from_bytes(sf.read(2), "big") // 2
+		named_group_list = []
+		for _ in range(count):
+			named_group_list.append(NamedGroup(int.from_bytes(sf.read(2), "big")))
+		return cls(named_group_list)
 
 
 class KeyShareServerHello(PrettyPrintable):
@@ -301,7 +363,7 @@ class SignatureScheme(IntEnum):
 
 	# EdDSA algorithms
 	ed25519 = 0x0807
-	ed448 = 0x0808
+	ed448   = 0x0808
 
 	# RSASSA-PSS algorithms with public key OID RSASSA-PSS
 	rsa_pss_pss_sha256 = 0x0809
@@ -310,7 +372,7 @@ class SignatureScheme(IntEnum):
 
 	# Legacy algorithms
 	rsa_pkcs1_sha1 = 0x0201
-	ecdsa_sha1 = 0x0203
+	ecdsa_sha1     = 0x0203
 
 
 class NamedGroup(IntEnum):
@@ -318,8 +380,8 @@ class NamedGroup(IntEnum):
 	secp256r1 = 0x0017
 	secp384r1 = 0x0018
 	secp521r1 = 0x0019
-	x25519 = 0x001D
-	x448 = 0x001E
+	x25519    = 0x001D
+	x448      = 0x001E
 
 	# Finite Field Groups (DHE)
 	ffdhe2048 = 0x0100
@@ -389,6 +451,17 @@ class TLSPlaintext(PrettyPrintable):
 		sf.write(len(self.fragment).to_bytes(2, "big"))
 		sf.write(self.fragment)
 		sf.flush()
+
+
+class TLSCiphertext(PrettyPrintable):
+	def __init__(self,
+		opaque_type,
+		legacy_record_version,
+		length,
+		encrypted_record
+	):
+		pass # TODO
+
 
 # END RECORD LAYER
 
@@ -504,8 +577,8 @@ foo += hello
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#sock.connect(("www.da.vidbuchanan.co.uk", 443))
-sock.connect(("localhost", 1234))
+sock.connect(("www.da.vidbuchanan.co.uk", 443))
+#sock.connect(("localhost", 1234))
 sf = sock.makefile("rwb")
 
 record = TLSPlaintext(ContentType.handshake, 0x0301, foo)
@@ -593,7 +666,7 @@ print(res)
 
 res = TLSPlaintext.read_from(sf)
 print("RECEIVING:")
-print(res)
+#print(res)
 
 reconstructed = io.BytesIO()
 res.write_to(reconstructed)
@@ -605,10 +678,38 @@ print(len(msg), msg.hex())
 blah = reconstructed[:5]
 pt = roll13.crypto.gcm.gcm_ad(server_write_iv, msg, blah, tag, roll13.crypto.aes.AES128(server_write_key).encrypt_block)
 
-print(pt.hex())
+#print(pt.hex())
 
-"""
+barbie = io.BytesIO(pt)
+foo = Handshake.read_from(barbie)
+print("barbie", barbie.read(1))
+print(foo)
+
+
+res = TLSPlaintext.read_from(sf)
+print("RECEIVING:")
+#print(res)
+
+reconstructed = io.BytesIO()
+res.write_to(reconstructed)
+reconstructed = bytes(reconstructed.getbuffer())
+
+foo = res.fragment
+msg, tag = foo[:-16], foo[-16:]
+blah = reconstructed[:5]
+bar = bytearray(server_write_iv)
+bar[-1] ^= 1
+pt = roll13.crypto.gcm.gcm_ad(bar, msg, blah, tag, roll13.crypto.aes.AES128(server_write_key).encrypt_block)
+
+#print(pt.hex())
+foo = Handshake.read_from(io.BytesIO(pt))
+print(foo)
+
+
 res = TLSPlaintext.read_from(sf)
 print("RECEIVING:")
 print(res)
-"""
+
+res = TLSPlaintext.read_from(sf)
+print("RECEIVING:")
+print(res)
