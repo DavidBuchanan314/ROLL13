@@ -1,12 +1,14 @@
 # ROLL13
 
+**Note: This project is unfinished and doesn't really do anything, but it might contain some useful info so I'm publishing it anyway. It contains BROKEN AND VULNERABLE CRYPTOGRAPHIC IMPLEMENTATIONS - look but don't touch!!**
+
 ROLL13 is a pure python implementation of a TLS 1.3 client, hand-rolled from first principles, including all cryptographic operations. It implements the `TLS_AES_128_GCM_SHA256` cipher suite, and secp256r1 (NIST P-256) for key exchange.
 
 ### Motivations
 
 I wanted to learn about the protocols and cryptography involved, in excruciating detail. This is explicitly **NOT** intended to be complete, secure, or fast. Although *correctness* is a goal, I can't make any guarantees there either.
 
-As a secondary goal, it proves that modern cryptography standards are still accessible to mere mortals.
+As a secondary goal, it proves that modern-ish cryptography standards are still accessible to mere mortals.
 
 The code is intended to be as readable as possible (even at the cost of performance).
 There are lost of performance optimisations that could be made (especially in AES),
@@ -17,7 +19,7 @@ however, it is not intuitively obvious how that code maps onto what is described
 in the FIPS 197 spec.
 
 \*Although its use of lookup tables likely makes it vulnerable to cache timing
-side-channel attacks.
+side-channel attacks. (not that I can claim mine is any better in terms of security...)
 
 ### Self-Imposed Restrictions
 
